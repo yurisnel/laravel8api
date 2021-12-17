@@ -52,10 +52,6 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function update($itemId, array $input)
     {
-        //$validator = Validator::make($input, $this->rules());
-        /*if ($validator->fails()) {
-            throw new HttpException(\Lang::get('messages.input_error'), Response::HTTP_BAD_REQUEST, $validator->errors()->toArray());
-        }*/
         if (empty($input)) {
             throw new HttpException(\Lang::get('messages.input_error'), Response::HTTP_BAD_REQUEST);
         } else {

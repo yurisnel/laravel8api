@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Model\Attribute;
 use App\Model\AttributeOption;
 use App\Model\ProductAttributeValue;
+use  App\Events\ProductUpdateEvent;
 
 class Product extends Model
 {
@@ -18,6 +19,18 @@ class Product extends Model
 
     protected $appends = ['variations'];
 
+    /*creating and created, updating and updated,saving and saved,
+     deleting and deleted, restoring and restored, retrieved:*/
+    protected $dispatchesEvents = [       
+        "saved" => ProductUpdateEvent::class
+    ];     
+
+
+
+    public function userSubscription()
+    {
+        return $this->hasMany('App\Model\UserSubscription');
+    }
 
     public function productAttributeValue()
     {
@@ -30,11 +43,6 @@ class Product extends Model
         //return $this->productAttributeValue()->pluck('id')->flatten();
         //return $this->productAttributeValue()->pluck('id', 'price', 'attribute_options_id');
         return $this->productAttributeValue()->get();
-    }
-
-    protected static function newFactory()
-    {
-        return \Database\Factories\ProductFactory::new();
     }
 
     public static function create($data)
@@ -79,5 +87,10 @@ class Product extends Model
                 ProductAttributeValue::create($data);
             }
         }
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ProductFactory::new();
     }
 }

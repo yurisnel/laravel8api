@@ -4,32 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Interfaces\ProductRepositoryInterface;
-use App\Model\Product;
-use App\Model\AttributeOption;
+
 
 class ProductController extends Controller
 {
-    var $status = 200;
-
     private ProductRepositoryInterface $repo;
 
     public function __construct(ProductRepositoryInterface $repo)
     {
         $this->repo = $repo;
-    }
-
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function test($id = 1)
-    {
-
-        $result = AttributeOption::with("attribute")->get();
-
-        //$result = Product::find($id)->productAttributeValue()->where("price", ">", 600)->get(); 
-        //Debugbar::enable();
-
-        return $result;
     }
 
     /**
@@ -41,7 +24,7 @@ class ProductController extends Controller
     {
         $result = $this->repo->getAll();
         $response = ["success" => true, "data" => $result];
-        return $response;
+        return response()->json($response);
     }
 
     /**
@@ -53,9 +36,9 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $input = $request->all();
-        $result = $this->repo->create($input);
-        $response = ["success" => true, "message" => \Lang::get('messages.ok_store'), "data" => $result];
-        return response()->json($response, $this->status);
+        $product = $this->repo->create($input);
+        $response = ["success" => true, "message" => \Lang::get('messages.ok_store'), "data" => $product];
+        return response()->json($response);
     }
 
     /**
@@ -66,9 +49,9 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        $result = $this->repo->getById($id);
-        $response = ["success" => true, "data" => $result];
-        return response()->json($response, $this->status);
+        $product = $this->repo->getById($id);
+        $response = ["success" => true, "data" => $product];
+        return response()->json($response);
     }
 
     /**
@@ -81,9 +64,10 @@ class ProductController extends Controller
     public function update(Request $request,  $id)
     {
         $input = $request->all();
-        $result = $this->repo->update($id, $input);
-        $response = ["success" => true, "message" => \Lang::get('messages.ok_store'), "data" => $result];
-        return response()->json($response, $this->status);
+        $product = $this->repo->update($id, $input);
+        //ProductUpdateEvent::dispatch($product);
+        $response = ["success" => true, "message" => \Lang::get('messages.ok_store'), "data" => $product];
+        return response()->json($response);
     }
     /**
      * Remove the specified product.
@@ -95,7 +79,7 @@ class ProductController extends Controller
     {
         $this->repo->delete($id);
         $resp = ["success" => true,  "message" => \Lang::get('messages.ok_delete')];
-        return response()->json($resp, $this->status);
+        return response()->json($resp);
     }
 
     /**

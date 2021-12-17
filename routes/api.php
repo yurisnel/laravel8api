@@ -19,7 +19,7 @@ use App\Http\Controllers\ProductController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('test/{id}',  [ProductController::class, 'test']);
+Route::get('subscribe/{user_id}/{product_id}',  [UserController::class, 'subscribe']);
 
 Route::get('products/filter',  [ProductController::class, 'filter']);
 Route::get('products', [ProductController::class, 'index']);

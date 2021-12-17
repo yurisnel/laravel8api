@@ -5,6 +5,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use App\Model\User;
 use App\Model\Product;
 use App\Model\Attribute;
 use App\Model\AttributeOption;
@@ -19,11 +20,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        /*$this->call([
-             ProductSeeder::class
-         ]);*/
+        $this->call([
+            // ProductSeeder::class
+        ]);
 
-        //create five produts 
+
+        User::factory()->count(5)->create();
+
         $products = Product::factory()->count(5)->create();
 
         $attributes = [
@@ -40,7 +43,7 @@ class DatabaseSeeder extends Seeder
             ]);
 
             foreach ($options as $opt) {
-             
+
                 //Create options of attribute
                 $attributesOptions = AttributeOption::factory()
                     ->count(1)
@@ -57,7 +60,7 @@ class DatabaseSeeder extends Seeder
                         }
                         ProductAttributeValue::factory()->create([
                             'product_id' => $p->id,
-                            'attribute_options_id' => $aopt->id                           
+                            'attribute_options_id' => $aopt->id
                         ]);
                     }
                 }

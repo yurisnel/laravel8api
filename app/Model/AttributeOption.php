@@ -9,7 +9,9 @@ class AttributeOption extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['attribute_id','created_at', 'updated_at'];
+    protected $hidden = [
+        'attribute_id', 'created_at', 'updated_at'
+    ];
     protected $appends = ['attribute'];
 
     public function attribute()

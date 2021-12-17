@@ -13,7 +13,9 @@ class ProductAttributeValue extends Model
         'product_id', 'attribute_options_id', 'price'
     ];
 
-    protected $hidden = ['product_id','attribute_options_id','created_at', 'updated_at'];
+    protected $hidden = [
+        'product_id','attribute_options_id','created_at', 'updated_at'
+    ];
 
     protected $appends = ['option'];
 
