@@ -1,61 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Api rest Demo con Laravel 8 
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Esta Api Rest fué desarrollada con fines demostrativos y prácticos con el framework Laravel en su versión 8.2, donde se plantean los siguientes requisitos:
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
++ Realizar CRUD (crear, actualizar, eliminar) de los siguientes datos de productos. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    + Nombre
+    + Descripción
+    + Atributos (Color, talla, etc... pueden estar predefinidos)
+    + Precio
+    + stock
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
++ El precio del producto puede variar en dependencia de los atributos del producto
++ Filtrar por nombre, descripción, atributos, precio (desde-hasta), indicar si  se desean filtrar solo productos con stock en existencia
++ Suscribir usuarios a productos sin stock y avisarle (con un email) de manera automática cuando se reponga stock, solo se debe avisar a la cantidad de clientes para los que alcance el stock.
 
-## Learning Laravel
+<img
+src="preview.png"
+raw=true
+alt=""
+style="margin:10px"
+/>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Desarrollo
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Análisis y gestión de base de datos:
++ Se crea tabla products (name, description, price, stock) para almacenar datos del producto
++ Se crea tabla attributes(name description) para almacenar los nombre de los atributos como son color, talla, estado 
++ Se crea tabla attributes_options(name, attribute_id) para almacenar los nombres de las opciones de cada atributos, por ejemplo: para el atributo color, opciones como: rojo, negro, blanco, para el atributo tamaño, opciones como grande, mediano, pequeño.
++ Se crea tabla product_attribute_values(attribute_option_id, product_id, price) para relacionar los productos con las opciones de los atributos que posea y donde se almacena también el precio, creando así variaciones del mismo producto, pudiera tenerse aca un stock para cada variación.
++ Se crea tabla userSubscription(user_id, product_id) donde se relacionan los usuarios con los productos a los que se desea suscribir.
 
-## Laravel Sponsors
+### Codificación
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
++ Se crean clases migrations y clases models eloquent con soporte a factory para la creación de objetos en masa que facilitan el proceso de realizar test.
++ Se realizan relationships entre los models.
++ Se especializa la función create del model [Product](https://github.com/yurisnel/laravel8api/blob/main/app/Model/Product.php) donde agrega soporte para crear variaciones desde el cliente del api.
++ Se utiliza patrón [repository](https://github.com/yurisnel/laravel8api/blob/main/app/Repositories/ProductRepository.php) donde se realizan todas las operaciones con los modelos y base de datos.
++ Se utiliza patrón observable creando [event](https://github.com/yurisnel/laravel8api/blob/main/app/Events/ProductUpdateEvent.php) para cuando se actualiza el stock de productos un [listeners](https://github.com/yurisnel/laravel8api/blob/main/app/Listeners/ProductUpdateListener.php) realice la operación de notificar por correo a clientes que están suscriptos al producto.
++ Se manejan los errores, se crea clase personalizada de Error, se capturan todos las excepciones en un único lugar previsto por laravel > Exceptions\Handler.php
++ Se utilizan clases Resources para dar formato a las respuestas
++ Se implementa documentación del API con OpenAPI y Swagger con el módulo darkaonline/l5+swagger. Donde se utilizan anotaciones en los controller y en las clases Resources donde se crear Schema reutilizable para facilitar la generación del api doc.
++ Se implementan [Test](https://github.com/yurisnel/laravel8api/blob/main/tests/Feature/ProductTest.php) automáticos
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+## Entorno de desarrollo utilizado
++ php 7.4.22 (requerido 7.3+)
++ mysql 5.1
++ composer 2.1.14
++ Visual Code 1.63.1
 
-## Contributing
+## Implementación de la solución
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
++ Clonar repositorio: https://github.com/yurisnel/laravel8api
++ Descargar dependencias: *composer install*
++ Crear base de datos 
++ Duplicar *.env.example* y cambiar nombre a *.env*
++ Indicar en el fichero *.env* los datos de acceso al servidor(DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD) 
++ Ejecutar migraciones para crear base de datos: *php artisan migrate* (agregar al comando *--seed* para insertar datos de pruebas)
++ Documentación del api: 
+http://localhost/laravel8api/public/api/documentation
++ Para realizar test: 
+    + Duplicar *.env.example* y cambiar nombre a *.env.testing*
+    + Indicar en el fichero *.env.testing* los datos de acceso al servidor (la base de datos no debe ser la misma, crear una nueva)
+    + Ejecutar: *php artisan test*
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+<img
+src="preview-testing.png"
+raw=true
+alt=""
+style="margin:10px"
+/>
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The Laravel framework is open+sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

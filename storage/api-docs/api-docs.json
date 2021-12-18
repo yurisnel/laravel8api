@@ -187,7 +187,7 @@
                         }
                     },
                     "404": {
-                        "description": "Bad Request"
+                        "description": "Product Not Found"
                     }
                 }
             }
@@ -310,12 +310,6 @@
             "VariationResource": {
                 "description": "Class VariationResource",
                 "properties": {
-                    "id": {
-                        "title": "ID",
-                        "description": "ID",
-                        "format": "int64",
-                        "default": 1
-                    },
                     "attribute": {
                         "title": "attribute",
                         "description": "attribute name",

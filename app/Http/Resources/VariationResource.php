@@ -13,7 +13,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class VariationResource extends JsonResource
 {
     /**
-     * @OA\Property(format="int64", title="ID", default=1, description="ID", property="id"),
      * @OA\Property(format="string", title="attribute", default="color", description="attribute name" , property="attribute"),
      * @OA\Property(format="string", title="option", default="blue", description="attribute value ", property="option")
      * @OA\Property(format="float", title="price", default="50.99", description="price", property="price")
