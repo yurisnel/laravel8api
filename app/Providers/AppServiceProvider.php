@@ -25,5 +25,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         JsonResource::withoutWrapping();
+        
+        if (env("DB_SQL_DEBUG_LOG")) {
+            \DB::listen(function ($query) {
+                \Log::debug("DB: " . $query->sql . " [" .  implode(",", $query->bindings) . "]");
+            });
+        }
     }
 }

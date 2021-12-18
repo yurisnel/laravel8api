@@ -23,15 +23,20 @@ class ProductTest extends TestCase
         'name' => 'Product variations 01',
         'description' => 'this product have variations',
         'stock' => '10',
-        'variations' => [[
+        'variations' => [
+            [
                 'attribute' => 'color',
                 'option' => 'white',
-                'price' => 54.50,
-            ],[
-                'attribute' => 'color',
-                'option' => 'white',
-                'price' => 54.50,
-            ]   
+                'price' => 40.30,
+            ], [
+                'attribute' => 'size',
+                'option' => 'small',
+                'price' => 10.10,
+            ], [
+                'attribute' => 'size',
+                'option' => 'large',
+                'price' => 50.50,
+            ]
         ],
     ];
 
@@ -106,14 +111,14 @@ class ProductTest extends TestCase
         $filter = [
             'name' => $this->dataNewProductWithVariations['name'],
             // 'description' => 'description set',
-            //  'price' => '5-10',
+            // 'price' => '5-10',
             // 'stock' => true,
-            // 'attributes' => 'small,blue'
+            // 'variations' => 'small,blue'
         ];
 
-        //filter[name]=Producto name set&filter[description]=description set&filter[price]=5-9&filter[attributes]=small,blue
+        //name=Producto name set&description=description set&price=5-9&variations=small,blue
 
-        $query = http_build_query(array('filter' => $filter));
+        $query = http_build_query($filter);
 
         $this->json('GET', $this->apiPath . '/products/filter?' . $query)
             ->assertStatus(200)
@@ -128,10 +133,10 @@ class ProductTest extends TestCase
         $product = \App\Model\Product::create($this->dataNewProductWithVariations);
 
         $filter = [
-            'attributes' => 'small,blue'
+            'variations' => 'small,blue'
         ];
 
-        //filter[name]=Producto name set&filter[description]=description set&filter[price]=5-9&filter[attributes]=small,blue
+        //filter[name]=Producto name set&filter[description]=description set&filter[price]=5-9&filter[variations]=small,blue
 
         $query = http_build_query(array('filter' => $filter));
 

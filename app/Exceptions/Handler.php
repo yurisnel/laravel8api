@@ -58,7 +58,7 @@ class Handler extends ExceptionHandler
                 'error' => 'Resource not found'
             ], 404);
         }
-        if ($exception instanceof HttpException) {
+        if ($exception instanceof ExceptionData) {
             return response()->json([
                 'success'=> false,
                 'message' => $exception->getMessage(),

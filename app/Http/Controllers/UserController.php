@@ -6,7 +6,7 @@ use App\Model\UserSubscription;
 use Illuminate\Http\Request;
 use \Illuminate\Http\Response;
 use \Illuminate\Support\Facades\Validator;
-use App\Exceptions\HttpException;
+use App\Exceptions\ExceptionData;
 use App\Http\Resources\ResponseResource;
 
 
@@ -46,7 +46,7 @@ class UserController extends Controller
         $result = false;
         $validator = Validator::make($input, $this->rulesSubscribe());
         if ($validator->fails()) {
-            throw new HttpException(\Lang::get('messages.input_error'), Response::HTTP_BAD_REQUEST, $validator->errors()->toArray());
+            throw new ExceptionData(\Lang::get('messages.input_error'), Response::HTTP_BAD_REQUEST, $validator->errors()->toArray());
         } else {
             $result = UserSubscription::create($input);
         }

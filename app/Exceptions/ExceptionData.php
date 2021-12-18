@@ -2,7 +2,7 @@
 namespace App\Exceptions;
 use Exception;
 
-class HttpException extends Exception
+class ExceptionData extends Exception
 {
     protected $code;
     protected $message;

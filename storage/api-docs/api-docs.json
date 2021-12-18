@@ -25,7 +25,7 @@
                     "Products"
                 ],
                 "summary": "Products list",
-                "description": "List with data of all products ",
+                "description": "Get list of all products  ",
                 "operationId": "products-list",
                 "responses": {
                     "200": {
@@ -51,7 +51,7 @@
                     "Products"
                 ],
                 "summary": "Products create",
-                "description": "Create products ",
+                "description": "Create products and varations",
                 "operationId": "products-create",
                 "requestBody": {
                     "description": "Created product object",
@@ -87,7 +87,7 @@
                     "Products"
                 ],
                 "summary": "Get product",
-                "description": "Get the specified product",
+                "description": "Get specified product",
                 "operationId": "products-get",
                 "parameters": [
                     {
@@ -192,6 +192,76 @@
                 }
             }
         },
+        "/products/filter": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Product/Variatios filter",
+                "description": "Get a list of products and variations filtered by characteristics and attributes ",
+                "operationId": "products-filter",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Product name",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "Product description",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "Price (Ex: 100) or Price Range (Ex: 50-100)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "stock",
+                        "in": "query",
+                        "description": "Check if you only require the products that have stock",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "variations",
+                        "in": "query",
+                        "description": "Comma separated product variations (Ex: small, blue )",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProductVariationResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
         "/users/subscribe/{user_id}/{product_id}": {
             "get": {
                 "tags": [
@@ -279,6 +349,55 @@
                         "items": {
                             "$ref": "#/components/schemas/VariationResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductVariationResource": {
+                "description": "Class ProductVariationResource",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "format": "int64",
+                        "default": 1
+                    },
+                    "name": {
+                        "title": "name",
+                        "description": "name",
+                        "format": "string",
+                        "default": "product 01"
+                    },
+                    "description": {
+                        "title": "description",
+                        "description": "description",
+                        "format": "string",
+                        "default": "description test"
+                    },
+                    "stock": {
+                        "title": "stock",
+                        "description": "stock",
+                        "format": "int64",
+                        "default": "100"
+                    },
+                    "price": {
+                        "title": "price",
+                        "description": "price",
+                        "type": "number",
+                        "format": "currency",
+                        "default": "50.99"
+                    },
+                    "attribute": {
+                        "title": "attribute",
+                        "description": "attribute name",
+                        "format": "string",
+                        "default": "color"
+                    },
+                    "option": {
+                        "title": "option",
+                        "description": "attribute value ",
+                        "format": "string",
+                        "default": "blue"
                     }
                 },
                 "type": "object"

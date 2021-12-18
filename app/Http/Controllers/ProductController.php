@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Interfaces\ProductRepositoryInterface;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductVariationResource;
 use App\Http\Resources\ResponseResource;
 
 
@@ -25,7 +26,7 @@ class ProductController extends Controller
      *  operationId="products-list",
      *  tags={"Products"},
      *  summary="Products list",
-     *  description="List with data of all products ",     
+     *  description="Get list of all products  ",     
      *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ProductResource"))),
      *  @OA\Response(response="404", description="Bad Request")
      * )
@@ -45,7 +46,7 @@ class ProductController extends Controller
      *  operationId="products-get",
      *  tags={"Products"},
      *  summary="Get product",
-     *  description="Get the specified product",   
+     *  description="Get specified product",   
      *  @OA\Parameter(name="product_id", in="path", required=true, @OA\Schema(type="integer")),  
      *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ProductResource"))),
      *  @OA\Response(response="404", description="Bad Request")
@@ -66,7 +67,7 @@ class ProductController extends Controller
      *  operationId="products-create",
      *  tags={"Products"},
      *  summary="Products create",
-     *  description="Create products ",   
+     *  description="Create products and varations",   
      *  @OA\RequestBody(
      *      required=true,
      *      description="Created product object",
@@ -86,7 +87,7 @@ class ProductController extends Controller
         $input = $request->all();
         $product = $this->repo->create($input);
         $resource = new ProductResource($product);
-        return $resource->response()->setStatusCode(200); 
+        return $resource->response()->setStatusCode(200);
     }
 
 
@@ -121,7 +122,7 @@ class ProductController extends Controller
         $product = $this->repo->update($id, $input);
         //ProductUpdateEvent::dispatch($product);
         $resource = new ProductResource($product);
-        return $resource->response()->setStatusCode(200);       
+        return $resource->response()->setStatusCode(200);
     }
 
 
@@ -147,32 +148,30 @@ class ProductController extends Controller
         return new ResponseResource($response);
     }
 
+
     /**
-     * Filter products
-     *
+     * @OA\Get(
+     *  path="/products/filter",
+     *  operationId="products-filter",
+     *  tags={"Products"},
+     *  summary="Product/Variatios filter",
+     *  description="Get a list of products and variations filtered by characteristics and attributes ",  
+     * @OA\Parameter(name="name", description="Product name", in="query", @OA\Schema(type="string")),
+     * @OA\Parameter(name="description", description="Product description", in="query", @OA\Schema(type="string")),
+     * @OA\Parameter(name="price", description="Price (Ex: 100) or Price Range (Ex: 50-100)", in="query", @OA\Schema(type="string")),
+     * @OA\Parameter(name="stock", description="Check if you only require the products that have stock", in="query", @OA\Schema(type="boolean")),
+     * @OA\Parameter(name="variations", description="Comma separated product variations (Ex: small, blue )", in="query", @OA\Schema(type="string")),
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ProductVariationResource"))),
+     *  @OA\Response(response="404", description="Bad Request")
+     * )
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return AnonymousResourceCollection
      */
 
     public function filter(Request $request)
     {
         $input = $request->all();
         $result = $this->repo->filter($input);
-        $response = ["success" => true, "data" => $result];
-        return $response;
+        return ProductVariationResource::collection($result);
     }
 }
-
-
-/*
-200: OK. The standard success code and default option.
-201: Object created. Useful for the store actions.
-204: No content. When an action was executed successfully, but there is no content to return.
-206: Partial content. Useful when you have to return a paginated list of resources.
-400: Bad request. The standard option for requests that fail to pass validation.
-401: Unauthorized. The user needs to be authenticated.
-403: Forbidden. The user is authenticated, but does not have the permissions to perform an action.
-404: Not found. This will be returned automatically by Laravel when the resource is not found.
-500: Internal server error. Ideally you're not going to be explicitly returning this, but if something unexpected breaks, this is what your user is going to receive.
-503: Service unavailable. Pretty self explanatory, but also another code that is not going to be returned explicitly by the application.
-*/
