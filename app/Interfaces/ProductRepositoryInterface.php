@@ -9,4 +9,5 @@ interface ProductRepositoryInterface
     public function delete($itemId);
     public function create(array $input);
     public function update($itemId, array $input);
+    public function filter($input);
 }

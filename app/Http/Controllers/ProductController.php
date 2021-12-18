@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Interfaces\ProductRepositoryInterface;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ResponseResource;
 
 
 class ProductController extends Controller
@@ -15,71 +18,133 @@ class ProductController extends Controller
         $this->repo = $repo;
     }
 
+
     /**
-     * Display a listing of the products
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *  path="/products",
+     *  operationId="products-list",
+     *  tags={"Products"},
+     *  summary="Products list",
+     *  description="List with data of all products ",     
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ProductResource"))),
+     *  @OA\Response(response="404", description="Bad Request")
+     * )
+     * @return AnonymousResourceCollection
      */
+
     public function index()
     {
         $result = $this->repo->getAll();
-        $response = ["success" => true, "data" => $result];
-        return response()->json($response);
+        return ProductResource::collection($result);
     }
 
+
     /**
-     * Store a new products
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @OA\Get(
+     *  path="/products/{product_id}",
+     *  operationId="products-get",
+     *  tags={"Products"},
+     *  summary="Get product",
+     *  description="Get the specified product",   
+     *  @OA\Parameter(name="product_id", in="path", required=true, @OA\Schema(type="integer")),  
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ProductResource"))),
+     *  @OA\Response(response="404", description="Bad Request")
+     * )
+     * 
      */
+
+    public function show($product_id)
+    {
+        $product = $this->repo->getById($product_id);
+        return new ProductResource($product);
+    }
+
+
+    /**
+     * @OA\Post(
+     *  path="/products",
+     *  operationId="products-create",
+     *  tags={"Products"},
+     *  summary="Products create",
+     *  description="Create products ",   
+     *  @OA\RequestBody(
+     *      required=true,
+     *      description="Created product object",
+     *       @OA\JsonContent(      
+     *           ref="#/components/schemas/ProductResource"
+     *       )
+     * ),  
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(ref="#/components/schemas/ProductResource")),
+     *  @OA\Response(response="404", description="Bad Request")
+     * )
+     * @param  \Illuminate\Http\Request  $request
+     * @return ProductResource
+     */
+
     public function store(Request $request)
     {
         $input = $request->all();
         $product = $this->repo->create($input);
-        $response = ["success" => true, "message" => \Lang::get('messages.ok_store'), "data" => $product];
-        return response()->json($response);
+        $resource = new ProductResource($product);
+        return $resource->response()->setStatusCode(200); 
     }
 
-    /**
-     * Display the specified product
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $product = $this->repo->getById($id);
-        $response = ["success" => true, "data" => $product];
-        return response()->json($response);
-    }
 
     /**
-     * Update the specified product
-     *
+     * @OA\Put(
+     *  path="/products/{product_id}",
+     *  operationId="products-update",
+     *  tags={"Products"},
+     *  summary="Products Update",
+     *  description="Update the specified product",   
+     *  @OA\Parameter(name="product_id", in="path", required=true, @OA\Schema(type="integer")),  
+     *  @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/x-www-form-urlencoded",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 ref="#/components/schemas/ProductResource",
+     *             )
+     *         )
+     * ),  
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(ref="#/components/schemas/ProductResource")),
+     *  @OA\Response(response="404", description="Bad Request")
+     * )
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return ProductResource
      */
+
     public function update(Request $request,  $id)
     {
         $input = $request->all();
         $product = $this->repo->update($id, $input);
         //ProductUpdateEvent::dispatch($product);
-        $response = ["success" => true, "message" => \Lang::get('messages.ok_store'), "data" => $product];
-        return response()->json($response);
+        $resource = new ProductResource($product);
+        return $resource->response()->setStatusCode(200);       
     }
+
+
     /**
-     * Remove the specified product.
-     *
+     * @OA\Delete(
+     *  path="/products/{product_id}",
+     *  operationId="products-remove",
+     *  tags={"Products"},
+     *  summary="Remove product",
+     *  description="Remove the specified product", 
+     * @OA\Parameter(name="product_id", in="path", required=true, @OA\Schema(type="integer")),      
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent()),
+     *  @OA\Response(response="404", description="Product Not Found")
+     * )
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return ResponseResource
      */
-    public function destroy($id)
+
+    public function destroy($product_id)
     {
-        $this->repo->delete($id);
-        $resp = ["success" => true,  "message" => \Lang::get('messages.ok_delete')];
-        return response()->json($resp);
+        $this->repo->delete($product_id);
+        $response = ["success" => true,  "message" => \Lang::get('messages.ok_delete')];
+        return new ResponseResource($response);
     }
 
     /**

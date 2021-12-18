@@ -1,0 +1,351 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Api docs",
+        "description": "Api doc for the service rest",
+        "contact": {
+            "email": "ybolmey@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost/laravel8api/public/api/v1",
+            "description": "Demo API Server"
+        }
+    ],
+    "paths": {
+        "/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Products list",
+                "description": "List with data of all products ",
+                "operationId": "products-list",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProductResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Products create",
+                "description": "Create products ",
+                "operationId": "products-create",
+                "requestBody": {
+                    "description": "Created product object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductResource"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/products/{product_id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get product",
+                "description": "Get the specified product",
+                "operationId": "products-get",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProductResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Products Update",
+                "description": "Update the specified product",
+                "operationId": "products-update",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductResource"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Remove product",
+                "description": "Remove the specified product",
+                "operationId": "products-remove",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        },
+        "/users/subscribe/{user_id}/{product_id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User subscription",
+                "description": "Returns subscription data",
+                "operationId": "user-subscribe",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ResponseResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ProductResource": {
+                "description": "Class ProductResource",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "format": "int64",
+                        "default": 1
+                    },
+                    "name": {
+                        "title": "name",
+                        "description": "name",
+                        "format": "string",
+                        "default": "product 01"
+                    },
+                    "description": {
+                        "title": "description",
+                        "description": "description",
+                        "format": "string",
+                        "default": "description test"
+                    },
+                    "stock": {
+                        "title": "stock",
+                        "description": "stock",
+                        "format": "int64",
+                        "default": "100"
+                    },
+                    "price": {
+                        "title": "price",
+                        "description": "price",
+                        "type": "number",
+                        "format": "currency",
+                        "default": "50.99"
+                    },
+                    "variations": {
+                        "title": "variations",
+                        "description": "variations",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VariationResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ResponseResource": {
+                "description": "Class ResponseResource",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "description": "Request status",
+                        "format": "string",
+                        "default": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "description": "Request description (optional)",
+                        "format": "string",
+                        "default": "Operation finished"
+                    },
+                    "data": {
+                        "title": "data",
+                        "description": "Request response(optional)",
+                        "format": "string",
+                        "default": "[]"
+                    }
+                },
+                "type": "object"
+            },
+            "VariationResource": {
+                "description": "Class VariationResource",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "format": "int64",
+                        "default": 1
+                    },
+                    "attribute": {
+                        "title": "attribute",
+                        "description": "attribute name",
+                        "format": "string",
+                        "default": "color"
+                    },
+                    "option": {
+                        "title": "option",
+                        "description": "attribute value ",
+                        "format": "string",
+                        "default": "blue"
+                    },
+                    "price": {
+                        "title": "price",
+                        "description": "price",
+                        "format": "float",
+                        "default": "50.99"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Products",
+            "description": "API Endpoints of products"
+        }
+    ],
+    "security": [
+        []
+    ]
+}

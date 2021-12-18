@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use \Illuminate\Http\Response;
 use \Illuminate\Support\Facades\Validator;
 use App\Exceptions\HttpException;
+use App\Http\Resources\ResponseResource;
 
 
 class UserController extends Controller
@@ -20,12 +21,22 @@ class UserController extends Controller
     }
 
     /**
-     * Subscribe user to product with stock
-     *
+     * @OA\Get(
+     *  path="/users/subscribe/{user_id}/{product_id}",
+     *  operationId="user-subscribe",
+     *  tags={"Users"},
+     *  summary="User subscription",
+     *  description="Returns subscription data",
+     *  @OA\Parameter(name="user_id", in="path", required=true, @OA\Schema(type="integer")),
+     *  @OA\Parameter(name="product_id", in="path", required=true, @OA\Schema(type="integer")),
+     *  @OA\Response(response="200", description="Successful operation",  @OA\JsonContent(ref="#/components/schemas/ResponseResource")),
+     *  @OA\Response(response="404", description="Bad Request")
+     * )
      * @param  int  $user_id
      * @param  int  $product_id
-     * @return \Illuminate\Http\Response
+     * @return ResponseResource
      */
+
     public function subscribe($user_id, $product_id)
     {
         $input = [
@@ -39,7 +50,7 @@ class UserController extends Controller
         } else {
             $result = UserSubscription::create($input);
         }
-        $response = ["success" => true, "data" => $result];
-        return response()->json($response);
+        $response = ["success" => true, "data" => $result, "message" => \Lang::get('messages.ok_store')];
+        return new ResponseResource($response);
     }
 }

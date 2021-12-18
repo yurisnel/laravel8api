@@ -10,6 +10,8 @@ use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
+    var $apiPath = "/api/v1";
+
     var $dataNewProductSimple = [
         'name' => 'Product 01',
         'description' => 'this es product test 01',
@@ -21,29 +23,25 @@ class ProductTest extends TestCase
         'name' => 'Product variations 01',
         'description' => 'this product have variations',
         'stock' => '10',
-        'attributes' => [
-            'color' => [
-                'blue' => 5,
-                'red' => 7,
-                'black' => 1,
-            ],
-            'size' => [
-                'large' => 11,
-                'small' => 2,
-            ]
+        'variations' => [[
+                'attribute' => 'color',
+                'option' => 'white',
+                'price' => 54.50,
+            ],[
+                'attribute' => 'color',
+                'option' => 'white',
+                'price' => 54.50,
+            ]   
         ],
     ];
 
     public function testsProductSimpleAreCreatedCorrectly()
     {
 
-        $this->json('POST', '/api/products', $this->dataNewProductSimple)
+        $this->json('POST', $this->apiPath . '/products', $this->dataNewProductSimple)
             ->assertStatus(200)
             ->assertJson([
-                'success' => true
-            ])
-            ->assertJsonStructure([
-                'data' => ['id']
+                'name' => 'Product 01'
             ]);
     }
 
@@ -56,14 +54,11 @@ class ProductTest extends TestCase
             'description' => 'description set',
         ];
 
-        $this->json('PUT', '/api/products/' . $product->id, $dataSetProduct)
+        $this->json('PUT', $this->apiPath . '/products/' . $product->id, $dataSetProduct)
             ->assertStatus(200)
             ->assertJson([
-                'success' => true,
-                'data' => [
-                    'name' => 'Producto name set',
-                    'description' => 'description set'
-                ]
+                'name' => 'Producto name set',
+                'description' => 'description set'
             ]);
     }
 
@@ -72,7 +67,7 @@ class ProductTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $this->json('DELETE', '/api/products/' . $product->id)
+        $this->json('DELETE', $this->apiPath . '/products/' . $product->id)
             ->assertStatus(200)
             ->assertJson([
                 'success' => true
@@ -81,12 +76,10 @@ class ProductTest extends TestCase
 
     public function testArticlesAreListedCorrectly()
     {
-        $this->json('GET', '/api/products', [])
+        $this->json('GET', $this->apiPath . '/products', [])
             ->assertStatus(200)
             ->assertJsonStructure([
-                'data' => [
-                    '*' => ['name', 'description']
-                ]
+                '*' => ['name', 'description']
             ]);
     }
 
@@ -94,11 +87,13 @@ class ProductTest extends TestCase
 
     public function testsProductVariationsAreCreatedCorrectly()
     {
-        $this->json('POST', '/api/products', $this->dataNewProductWithVariations)
+        $this->json('POST', $this->apiPath . '/products', $this->dataNewProductWithVariations)
             ->assertStatus(200)
             ->assertJsonStructure([
-                'data' => [
-                    'variations' => ['*' => ['price', 'option']]
+                'id',
+                'name',
+                'variations' => [
+                    '*' => ['price', 'option', 'attribute']
                 ]
             ]);
     }
@@ -120,7 +115,7 @@ class ProductTest extends TestCase
 
         $query = http_build_query(array('filter' => $filter));
 
-        $this->json('GET', '/api/products/filter?' . $query)
+        $this->json('GET', $this->apiPath . '/products/filter?' . $query)
             ->assertStatus(200)
             ->assertJsonFragment([
                 'name' => $this->dataNewProductWithVariations['name'],
@@ -133,10 +128,6 @@ class ProductTest extends TestCase
         $product = \App\Model\Product::create($this->dataNewProductWithVariations);
 
         $filter = [
-            //'name' => $this->dataNewProductWithVariations['name'],
-            //'description' => 'description set',
-            // 'price' => '5-10',
-            // 'stock' => true,
             'attributes' => 'small,blue'
         ];
 
@@ -144,7 +135,7 @@ class ProductTest extends TestCase
 
         $query = http_build_query(array('filter' => $filter));
 
-        $this->json('GET', '/api/products/filter?' . $query)
+        $this->json('GET', $this->apiPath . '/products/filter?' . $query)
             ->assertStatus(200)
             ->assertJsonFragment([
                 'attribute' => 'size',

@@ -76,7 +76,7 @@ class ProductRepository implements ProductRepositoryInterface
     }
 
 
-    public function filter(array $input)
+    public function filter($input)
     {
 
         $filter = $input['filter'];

@@ -21,11 +21,9 @@ class Product extends Model
 
     /*creating and created, updating and updated,saving and saved,
      deleting and deleted, restoring and restored, retrieved:*/
-    protected $dispatchesEvents = [       
+    protected $dispatchesEvents = [
         "saved" => ProductUpdateEvent::class
-    ];     
-
-
+    ];
 
     public function userSubscription()
     {
@@ -47,19 +45,52 @@ class Product extends Model
 
     public static function create($data)
     {
-        if (!empty($data["attributes"])) {
-            $attributes = $data["attributes"];
-            unset($data["attributes"]);
-        }
         $model = static::query()->create($data);
 
-        if(!empty($attributes)){
-            self::createVariations($model, $attributes);
+        if (!empty($data["variations"])) {
+            self::createVariations($model, $data["variations"]);
+        }
+
+        if (!empty($data["attributes"])) {
+            self::createVariationsVersion2($model, $data["attributes"]);
         }
         return $model;
     }
 
     public static function createVariations($product, $attributes)
+    {
+        foreach ($attributes as $variation) {
+            $attribute_name = $variation['attribute'];
+            $option_name = $variation['option'];
+            $price = $variation['price'];
+
+            $attribute = Attribute::where('name', $attribute_name)->first();
+
+            if (!$attribute) {
+                $attribute = Attribute::create(['name' => $attribute_name]);
+            }
+
+            $option = AttributeOption::where('name', $option_name)->first();
+            if (!$option) {
+                $option = AttributeOption::create([
+                    'name' => $option_name,
+                    'attribute_id' => $attribute->id
+                ]);
+            }
+
+            $data = [
+                'product_id' => $product->id,
+                'attribute_options_id' => $option->id
+            ];
+            //eliminar la asociación si existira en caso de que se tratase de una actualización
+            ProductAttributeValue::where($data)->delete();
+
+            $data['price'] = $price;
+            ProductAttributeValue::create($data);
+        }
+    }
+
+    public static function createVariationsVersion2($product, $attributes)
     {
         foreach ($attributes as $attribute_name => $options) {
             $attribute = Attribute::where('name', $attribute_name)->first();
