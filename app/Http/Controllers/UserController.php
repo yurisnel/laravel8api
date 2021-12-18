@@ -25,7 +25,7 @@ class UserController extends Controller
      *  path="/users/subscribe/{user_id}/{product_id}",
      *  operationId="user-subscribe",
      *  tags={"Users"},
-     *  summary="User subscription",
+     *  summary="User Subscription",
      *  description="Returns subscription data",
      *  @OA\Parameter(name="user_id", in="path", required=true, @OA\Schema(type="integer")),
      *  @OA\Parameter(name="product_id", in="path", required=true, @OA\Schema(type="integer")),

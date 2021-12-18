@@ -24,7 +24,7 @@
                 "tags": [
                     "Products"
                 ],
-                "summary": "Products list",
+                "summary": "Products List",
                 "description": "Get list of all products  ",
                 "operationId": "products-list",
                 "responses": {
@@ -50,7 +50,7 @@
                 "tags": [
                     "Products"
                 ],
-                "summary": "Products create",
+                "summary": "Products Create",
                 "description": "Create products and varations",
                 "operationId": "products-create",
                 "requestBody": {
@@ -86,7 +86,7 @@
                 "tags": [
                     "Products"
                 ],
-                "summary": "Get product",
+                "summary": "Product Get",
                 "description": "Get specified product",
                 "operationId": "products-get",
                 "parameters": [
@@ -164,8 +164,8 @@
                 "tags": [
                     "Products"
                 ],
-                "summary": "Remove product",
-                "description": "Remove the specified product",
+                "summary": "Product Delete",
+                "description": "Delete the specified product",
                 "operationId": "products-remove",
                 "parameters": [
                     {
@@ -197,7 +197,7 @@
                 "tags": [
                     "Products"
                 ],
-                "summary": "Product/Variatios filter",
+                "summary": "Product/Variations Filter",
                 "description": "Get a list of products and variations filtered by characteristics and attributes ",
                 "operationId": "products-filter",
                 "parameters": [
@@ -267,7 +267,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "User subscription",
+                "summary": "User Subscription",
                 "description": "Returns subscription data",
                 "operationId": "user-subscribe",
                 "parameters": [
